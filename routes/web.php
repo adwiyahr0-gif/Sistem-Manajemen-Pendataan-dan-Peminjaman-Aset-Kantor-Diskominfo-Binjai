@@ -6,6 +6,7 @@ use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\User\AssetCatalogController;
 
 // Semua route di dalam grup ini wajib login
@@ -16,8 +17,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
 
     // --- FITUR KHUSUS ADMIN (Hanya bisa diakses jika role = admin) ---
-    // Jika Anda punya middleware 'admin', bisa dipasang di sini. 
-    // Sementara menggunakan auth agar fungsi tetap berjalan.
     Route::middleware(['auth'])->group(function () {
         
         // Aset & Inventaris
@@ -34,12 +33,15 @@ Route::middleware('auth')->group(function () {
         Route::put('borrowings/{id}/kembalikan', [BorrowingController::class, 'kembalikan'])->name('borrowings.kembalikan');
 
         // --- LAPORAN ---
-        Route::get('/reports', function () {
-            return view('reports.index');
-        })->name('reports.index');
+        // Menampilkan halaman laporan dengan pagination
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        
+        // Route BARU: Untuk mencetak seluruh data (1-10+) tanpa pagination
+        Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print');
 
         // --- KELOLA USER/ADMIN ---
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        // Gunakan post untuk store agar tidak error (sudah sesuai kodemu)
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');

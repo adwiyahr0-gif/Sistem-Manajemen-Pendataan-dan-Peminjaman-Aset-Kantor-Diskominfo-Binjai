@@ -25,28 +25,32 @@
                     <tbody>
                         @foreach($assets as $asset)
                         <tr>
-                            <td class="ps-4 fw-bold">{{ $asset->kode_aset }}</td>
-                            <td>{{ $asset->nama_aset }}</td>
+                            <td class="ps-4 fw-bold text-muted">{{ $asset->kode_aset }}</td>
+                            <td class="fw-semibold text-dark">{{ $asset->nama_aset }}</td>
                             <td>
-                                <span class="badge bg-info-subtle text-info border-0">
+                                <span class="badge bg-info-subtle text-info border-0 px-3 py-2">
                                     {{ ucfirst(str_replace('_', ' ', $asset->kondisi)) }}
                                 </span>
                             </td>
                             <td>
-                                <span class="badge {{ $asset->status == 'tersedia' ? 'bg-success' : 'bg-warning' }}">
+                                <span class="badge px-3 py-2 {{ $asset->status == 'tersedia' ? 'bg-success' : 'bg-warning text-dark' }}">
                                     {{ ucfirst($asset->status) }}
                                 </span>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="{{ route('assets.edit', $asset->id) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <form action="{{ route('assets.destroy', $asset->id) }}" method="POST" class="d-inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus aset ini?')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a href="{{ route('assets.edit', $asset->id) }}" class="btn btn-sm btn-outline-primary border-0">
+                                        <i class="bi bi-pencil-square fs-5"></i>
+                                    </a>
+
+                                    <form action="{{ route('assets.destroy', $asset->id) }}" method="POST" id="delete-form-{{ $asset->id }}" class="d-inline">
+                                        @csrf 
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-sm btn-outline-danger border-0 btn-delete" data-id="{{ $asset->id }}">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
@@ -55,7 +59,8 @@
             </div>
         </div>
     </div>
-    <div class="mt-3">
+
+    <div class="mt-4">
         {{ $assets->links() }}
     </div>
 </div>

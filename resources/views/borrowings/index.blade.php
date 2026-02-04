@@ -20,12 +20,10 @@
         {{ Auth::user()->role == 'admin' ? 'Daftar Transaksi Peminjaman' : 'Riwayat Peminjaman Saya' }}
     </h3>
     <div>
-        <button onclick="window.print()" class="btn btn-dark d-print-none me-2">
+        {{-- HANYA TOMBOL CETAK YANG TERSISA --}}
+        <button onclick="window.print()" class="btn btn-dark d-print-none">
             <i class="bi bi-printer"></i> Cetak Laporan
         </button>
-        @if(Auth::user()->role == 'admin')
-            <a href="{{ route('borrowings.create') }}" class="btn btn-primary d-print-none">+ Pinjam Aset Baru</a>
-        @endif
     </div>
 </div>
 
@@ -96,7 +94,6 @@
                         @endif
                     </td>
                     <td class="d-print-none text-center">
-                        {{-- JIKA LOGIN SEBAGAI ADMIN --}}
                         @if(Auth::user()->role == 'admin')
                             @if($status == 'pending')
                                 <div class="d-flex justify-content-center gap-1">
@@ -112,16 +109,15 @@
                             @elseif(in_array($status, ['aktif', 'disetujui', 'dipinjam']))
                                 <form action="{{ route('borrowings.kembalikan', $b->id) }}" method="POST">
                                     @csrf @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Selesaikan peminjaman ini?')">
+                                    <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Konfirmasi pengembalian fisik barang?')">
                                         <i class="bi bi-check2-circle"></i> Selesaikan
                                     </button>
                                 </form>
                             @else
                                 <span class="text-muted small">Arsip</span>
                             @endif
-
-                        {{-- JIKA LOGIN SEBAGAI USER --}}
                         @else
+                            {{-- Tampilan untuk User (Hanya Keterangan) --}}
                             @if($status == 'pending')
                                 <span class="text-muted small">Menunggu Admin</span>
                             @elseif(in_array($status, ['aktif', 'disetujui', 'dipinjam']))

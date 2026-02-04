@@ -1,133 +1,156 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+<style>
+    /* Header Tabel: Dark Navy & Center */
+    .table thead th { 
+        background-color: #001f3f !important; 
+        color: #ffffff !important; 
+        text-align: center; /* Rata tengah horizontal */
+        vertical-align: middle !important; /* Rata tengah vertikal */
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        padding: 15px !important;
+        border: none;
+    }
+
+    /* Isi Tabel: Semua Center & Rapih */
+    .table tbody td {
+        padding: 15px !important;
+        color: #333;
+        vertical-align: middle !important; /* KUNCI: Agar teks nama/pegawai tidak di atas */
+        text-align: center; /* KUNCI: Agar semua teks rata tengah horizontal */
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* Khusus untuk kolom Nama Barang agar teks kode tetap rapi dibawahnya */
+    .asset-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Menjaga teks aset & kode tetap center */
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 31, 63, 0.03);
+    }
+
+    .card { border-radius: 12px; }
+
+    .badge-custom {
+        padding: 8px 15px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pagination-wrapper { 
+        display: flex; 
+        justify-content: flex-end; 
+        margin-top: 25px; 
+    }
+
+    .btn-print {
+        background-color: #0d6efd;
+        border: none;
+        padding: 10px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-dark mb-1">Laporan Bulanan Inventaris</h2>
-            <p class="text-muted small">Rekapitulasi data aset dan aktivitas peminjaman.</p>
+            <h3 class="fw-bold text-dark mb-1">Laporan Bulanan Inventaris</h3>
+            <p class="text-muted small mb-0">Diskominfo Kota Binjai</p>
         </div>
-        <button class="btn btn-primary shadow-sm" onclick="window.print()">
-            <i class="bi bi-printer-fill me-2"></i> Cetak Laporan
-        </button>
+        <a href="{{ route('reports.print', ['month' => $month, 'year' => $year]) }}" target="_blank" class="btn btn-print text-white shadow-sm">
+            <i class="bi bi-printer-fill me-2"></i>Cetak Laporan 
+        </a>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4 d-print-none">
-        <div class="card-body">
-            <form class="row g-3 align-items-end">
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body bg-light">
+            <form action="{{ route('reports.index') }}" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-4">
-                    <label class="form-label small fw-bold">Pilih Bulan</label>
-                    <select class="form-select">
-                        <option value="1">Januari</option>
-                        <option value="2">Februari</option>
-                        <option value="3">Maret</option>
-                        <option value="4">April</option>
-                        </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold">Pilih Tahun</label>
-                    <select class="form-select">
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
+                    <label class="form-label small fw-bold text-uppercase">Bulan</label>
+                    <select name="month" class="form-select border-0 shadow-sm">
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <button type="submit" class="btn btn-dark w-100">
-                        <i class="bi bi-filter me-2"></i> Tampilkan Data
+                    <label class="form-label small fw-bold text-uppercase">Tahun</label>
+                    <select name="year" class="form-select border-0 shadow-sm">
+                        @for($y = date('Y'); $y >= 2024; $y--)
+                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-dark w-100 fw-bold">
+                        <i class="bi bi-funnel-fill me-2"></i>TAMPILKAN DATA
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-primary text-white">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 small opacity-75">Total Aset Baru</p>
-                            <h3 class="mb-0 fw-bold">12</h3>
-                        </div>
-                        <i class="bi bi-box-seam fs-1 opacity-25"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-success text-white">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 small opacity-75">Selesai Dipinjam</p>
-                            <h3 class="mb-0 fw-bold">25</h3>
-                        </div>
-                        <i class="bi bi-check-circle fs-1 opacity-25"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-danger text-white">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 small opacity-75">Aset Rusak/Hilang</p>
-                            <h3 class="mb-0 fw-bold">2</h3>
-                        </div>
-                        <i class="bi bi-exclamation-triangle fs-1 opacity-25"></i>
-                    </div>
-                </div>
-            </div>
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th width="70px">NO</th>
+                        <th width="150px">TANGGAL</th>
+                        <th>NAMA BARANG / ASET</th>
+                        <th>PEGAWAI / PEMINJAM</th>
+                        <th width="200px">STATUS AKTIVITAS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($activities as $index => $act)
+                    <tr>
+                        <td class="fw-bold text-muted">{{ $activities->firstItem() + $index }}</td>
+                        <td>{{ \Carbon\Carbon::parse($act->tanggal_pinjam)->format('d/m/Y') }}</td>
+                        <td>
+                            <div class="asset-info">
+                                <span class="fw-bold text-dark">{{ $act->asset->nama_aset }}</span>
+                                <span class="text-muted small" style="font-size: 0.7rem;">{{ $act->asset->kode_aset }}</span>
+                            </div>
+                        </td>
+                        <td class="fw-semibold">{{ $act->nama_peminjam }}</td>
+                        <td>
+                            @if($act->status_peminjaman == 'Selesai')
+                                <span class="badge badge-custom rounded-pill bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-check-circle-fill me-2"></i>PENGEMBALIAN
+                                </span>
+                            @else
+                                <span class="badge badge-custom rounded-pill bg-warning-subtle text-dark border border-warning-subtle">
+                                    <i class="bi bi-arrow-right-circle-fill me-2"></i>PEMINJAMAN
+                                </span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="py-5 text-muted italic">Data tidak ditemukan untuk periode ini.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3">
-            <h6 class="mb-0 fw-bold text-primary">Detail Aktivitas Inventaris</h6>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light text-muted small text-uppercase">
-                        <tr>
-                            <th class="ps-4">Tgl Transaksi</th>
-                            <th>Nama Barang</th>
-                            <th>Pegawai/Peminjam</th>
-                            <th>Status Aktivitas</th>
-                            <th class="text-end pe-4">Keterangan</th>
-                        </tr>
-                    </thead>
-                    <tbody class="small">
-                        <tr>
-                            <td class="ps-4">12 Feb 2025</td>
-                            <td class="fw-bold">Laptop ASUS ExpertBook</td>
-                            <td>Andi Saputra</td>
-                            <td><span class="badge bg-success-subtle text-success">PENGEMBALIAN</span></td>
-                            <td class="text-end pe-4">Kondisi Baik</td>
-                        </tr>
-                        <tr>
-                            <td class="ps-4">10 Feb 2025</td>
-                            <td class="fw-bold">Printer Epson L3210</td>
-                            <td>Budi Setiawan</td>
-                            <td><span class="badge bg-warning-subtle text-warning text-dark">PEMINJAMAN BARU</span></td>
-                            <td class="text-end pe-4">Proyek Lapangan</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="card-footer bg-white py-3 d-print-none">
-            <p class="small text-muted mb-0">* Laporan ini di-generate secara otomatis oleh Sistem InventarisKu.</p>
-        </div>
+    <div class="pagination-wrapper">
+        {{ $activities->links() }}
     </div>
 </div>
-
-<style>
-    @media print {
-        body { background-color: white !important; }
-        .card { border: 1px solid #dee2e6 !important; shadow: none !important; }
-        .badge { border: 1px solid #000 !important; color: #000 !important; background: transparent !important; }
-    }
-</style>
 @endsection

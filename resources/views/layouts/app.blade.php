@@ -161,7 +161,6 @@
                     <i class="bi bi-grid-1x2-fill me-3"></i> Dashboard
                 </a>
 
-                {{-- MENU UNTUK ADMIN --}}
                 @if(Auth::user()->role == 'admin')
                     <div class="sidebar-section-title">Aset & Inventaris</div>
                     <a class="list-group-item {{ request()->routeIs('assets.*') ? 'active' : '' }}" href="{{ route('assets.index') }}">
@@ -183,7 +182,6 @@
                         <i class="bi bi-person-gear me-3"></i> Kelola Admin
                     </a>
                 @else
-                {{-- MENU UNTUK USER/STAFF --}}
                     <div class="sidebar-section-title">Layanan User</div>
                     <a class="list-group-item {{ request()->routeIs('user.assets.index') ? 'active' : '' }}" href="{{ route('user.assets.index') }}">
                         <i class="bi bi-search me-3"></i> Cari & Pinjam Aset
@@ -193,7 +191,6 @@
                     </a>
                 @endif
 
-                {{-- BAGIAN PERSONAL (Tampil untuk Admin & User) --}}
                 <div class="sidebar-section-title">Personal</div>
                 <a class="list-group-item {{ request()->routeIs('profile.index') ? 'active' : '' }}" href="{{ route('profile.index') }}">
                     <i class="bi bi-person-bounding-box me-3"></i> Profil Saya
@@ -235,16 +232,54 @@
 
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        window.addEventListener('DOMContentLoaded', event => {
-            const sidebarToggle = document.body.querySelector('#sidebarToggle');
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', event => {
-                    event.preventDefault();
-                    document.body.classList.toggle('sb-sidenav-toggled');
+        $(document).ready(function() {
+            // Toggle Sidebar
+            $('#sidebarToggle').on('click', function(e) {
+                e.preventDefault();
+                $('body').toggleClass('sb-sidenav-toggled');
+            });
+
+            // KONFIRMASI HAPUS (Event Delegation agar pasti kena)
+            $(document).on('click', '.btn-delete', function(e) {
+                e.preventDefault();
+                let id = $(this).data('id');
+                let form = $('#delete-form-' + id);
+
+                Swal.fire({
+                    title: 'Hapus data?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#00008b',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
                 });
-            }
+            });
         });
     </script>
+
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    </script>
+    @endif
+
 </body>
 </html>

@@ -41,8 +41,18 @@
                     </div>
                     
                     <div class="card-body">
-                        <h6 class="fw-bold text-dark mb-1">{{ $asset->name }}</h6>
-                        <p class="text-muted small mb-3 text-truncate-2" style="height: 40px;">{{ $asset->description ?? 'Tidak ada deskripsi.' }}</p>
+                        {{-- Nama Aset --}}
+                        <h6 class="fw-bold text-dark mb-1">{{ $asset->nama_aset }}</h6>
+                        
+                        {{-- Deskripsi Aset dengan Limit Karakter agar tetap rapi --}}
+                        <p class="text-muted small mb-3" style="min-height: 40px;">
+                            @if($asset->deskripsi)
+                                {{ Str::limit($asset->deskripsi, 70) }}
+                            @else
+                                <span class="fst-italic opacity-50">Informasi spesifikasi belum tersedia.</span>
+                            @endif
+                        </p>
+
                         <div class="d-grid">
                             <a href="{{ route('borrowings.create', ['asset_id' => $asset->id]) }}" class="btn btn-sm btn-outline-primary rounded-pill fw-bold">
                                 <i class="bi bi-plus-lg me-1"></i> Pinjam Barang
@@ -67,11 +77,5 @@
 <style>
     .card-hover { transition: all 0.3s ease; }
     .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-    .text-truncate-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
 </style>
 @endsection
