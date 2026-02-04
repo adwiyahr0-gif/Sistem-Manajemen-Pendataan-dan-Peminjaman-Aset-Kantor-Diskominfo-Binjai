@@ -2,55 +2,15 @@
 
 @section('content')
 <style>
-    @keyframes particleFloat {
-        0% { 
-            transform: translateY(100vh) scale(0);
-            opacity: 0;
-        }
-        10% {
-            opacity: 1;
-            transform: translateY(90vh) scale(1);
-        }
-        90% {
-            opacity: 1;
-        }
-        100% { 
-            transform: translateY(-10vh) scale(0);
-            opacity: 0;
-        }
-    }
-
-    @keyframes sparkle {
-        0%, 100% {
-            opacity: 0;
-            transform: scale(0) rotate(0deg);
-        }
-        50% {
-            opacity: 1;
-            transform: scale(1.5) rotate(180deg);
-        }
-    }
-
-    @keyframes wave {
-        0%, 100% {
-            transform: translateX(-50%) translateY(0) scale(1);
-        }
-        50% {
-            transform: translateX(-50%) translateY(-30px) scale(1.05);
-        }
-    }
-
-    @keyframes slideRight {
+    @keyframes gradientShift {
         0% {
-            transform: translateX(-100%);
-            opacity: 0;
+            background-position: 0% 50%;
         }
         50% {
-            opacity: 0.8;
+            background-position: 100% 50%;
         }
         100% {
-            transform: translateX(100%);
-            opacity: 0;
+            background-position: 0% 50%;
         }
     }
 
@@ -64,38 +24,6 @@
         50% { transform: translateY(-15px); }
     }
 
-    @keyframes floatBig {
-        0%, 100% { transform: translateY(0px) scale(1); }
-        50% { transform: translateY(-30px) scale(1.1); }
-    }
-
-    @keyframes pulse {
-        0%, 100% { 
-            transform: scale(1);
-            opacity: 0.5;
-        }
-        50% { 
-            transform: scale(1.3);
-            opacity: 0.8;
-        }
-    }
-
-    @keyframes rotate {
-        from { transform: translate(-50%, -50%) rotate(0deg); }
-        to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    @keyframes twinkle {
-        0%, 100% { 
-            opacity: 0.3;
-            transform: scale(0.8);
-        }
-        50% { 
-            opacity: 1;
-            transform: scale(1.2);
-        }
-    }
-
     * {
         margin: 0;
         padding: 0;
@@ -106,7 +34,9 @@
         margin: 0;
         padding: 0;
         min-height: 100vh;
-        background: #00008B;
+        background: linear-gradient(-45deg, #00008B, #000080, #0000CD, #1e3a8a, #00008B);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -115,34 +45,19 @@
         overflow: hidden;
     }
 
-    /* Large pulsing orbs */
+    /* Overlay for depth */
     body::before {
         content: '';
         position: absolute;
-        top: 10%;
-        right: 10%;
-        width: 350px;
-        height: 350px;
-        background: radial-gradient(circle, rgba(100, 149, 237, 0.4) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: pulse 5s ease-in-out infinite;
-        filter: blur(50px);
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+        pointer-events: none;
     }
 
-    body::after {
-        content: '';
-        position: absolute;
-        bottom: 10%;
-        left: 10%;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(135, 206, 250, 0.35) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: pulse 6s ease-in-out infinite 1s;
-        filter: blur(50px);
-    }
-
-    /* Container for all effects */
+    /* Container for all effects - now empty */
     .background-effects {
         position: fixed;
         top: 0;
@@ -151,142 +66,7 @@
         height: 100%;
         pointer-events: none;
         z-index: 1;
-    }
-
-    /* Big sparkle stars */
-    .sparkle {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        background: white;
-        border-radius: 50%;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.5);
-    }
-
-    .sparkle::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 20px;
-        height: 2px;
-        background: white;
-        box-shadow: 0 0 10px white;
-    }
-
-    .sparkle::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(90deg);
-        width: 20px;
-        height: 2px;
-        background: white;
-        box-shadow: 0 0 10px white;
-    }
-
-    .sparkle:nth-child(1) {
-        top: 15%;
-        left: 25%;
-        animation: sparkle 3s ease-in-out infinite;
-    }
-
-    .sparkle:nth-child(2) {
-        top: 35%;
-        left: 75%;
-        animation: sparkle 2.5s ease-in-out infinite 0.5s;
-    }
-
-    .sparkle:nth-child(3) {
-        top: 55%;
-        left: 15%;
-        animation: sparkle 3.5s ease-in-out infinite 1s;
-    }
-
-    .sparkle:nth-child(4) {
-        top: 75%;
-        left: 65%;
-        animation: sparkle 2.8s ease-in-out infinite 1.5s;
-    }
-
-    .sparkle:nth-child(5) {
-        top: 25%;
-        left: 85%;
-        animation: sparkle 3.2s ease-in-out infinite 0.8s;
-    }
-
-    .sparkle:nth-child(6) {
-        top: 65%;
-        left: 35%;
-        animation: sparkle 2.6s ease-in-out infinite 1.2s;
-    }
-
-    /* Large floating shapes */
-    .floating-shape {
-        position: absolute;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(135, 206, 250, 0.3) 0%, transparent 70%);
-        filter: blur(30px);
-    }
-
-    .floating-shape:nth-child(7) {
-        width: 250px;
-        height: 250px;
-        top: 20%;
-        left: 5%;
-        animation: floatBig 10s ease-in-out infinite;
-    }
-
-    .floating-shape:nth-child(8) {
-        width: 200px;
-        height: 200px;
-        bottom: 15%;
-        right: 10%;
-        animation: floatBig 8s ease-in-out infinite reverse;
-    }
-
-    .floating-shape:nth-child(9) {
-        width: 180px;
-        height: 180px;
-        top: 60%;
-        left: 80%;
-        animation: floatBig 9s ease-in-out infinite 2s;
-    }
-
-    /* Wide moving light beams */
-    .light-beam {
-        position: absolute;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.4), transparent);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-        animation: slideRight 10s linear infinite;
-    }
-
-    .light-beam:nth-child(11) {
-        animation-delay: 5s;
-    }
-
-    /* Large rotating circles */
-    .rotating-circle {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 800px;
-        height: 800px;
-        border: 2px solid rgba(255, 255, 255, 0.08);
-        border-radius: 50%;
-        animation: rotate 40s linear infinite;
-    }
-
-    .rotating-circle:nth-child(12) {
-        width: 600px;
-        height: 600px;
-        border-width: 1px;
-        animation-duration: 30s;
-        animation-direction: reverse;
+        display: none;
     }
 
     .login-wrapper {
@@ -681,7 +461,6 @@
                         <option value="" disabled selected>-- Pilih Role Anda --</option>
                         <option value="admin">Administrator</option>
                         <option value="staff">Staff/Pegawai</option>
-                        <option value="user">User/Peminjam</option>
                     </select>
                     <i class="bi bi-chevron-down select-arrow"></i>
                 </div>
@@ -700,7 +479,7 @@
 
             <!-- Login Button -->
             <button type="submit" class="btn-login">
-                <i class="bi bi-box-arrow-in-right me-2"></i>MASUK KE SISTEM
+                <i class="bi bi-box-arrow-in-right me-2"></i>LOGIN
             </button>
 
             <!-- Register Link -->
@@ -719,7 +498,7 @@
 
 <!-- Copyright -->
 <div class="copyright">
-    © 2026 <a href="#">DISKOMINFO Kota Binjai</a>
+    © 2025 <a href="#">DISKOMINFO Kota Binjai</a>
 </div>
 
 <script>

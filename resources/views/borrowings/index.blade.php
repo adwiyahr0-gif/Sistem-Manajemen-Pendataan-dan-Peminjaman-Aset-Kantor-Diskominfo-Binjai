@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- KOP SURAT: Hanya muncul saat diprint --}}
+{{-- KOP SURAT --}}
 <div class="d-none d-print-block">
     <div class="d-flex align-items-center pb-2 mb-4" style="border-bottom: 4px double #000;">
         <img src="{{ asset('images/binjai.png') }}" alt="Logo" style="width: 80px; height: auto;" class="me-3">
@@ -16,120 +16,135 @@
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="d-print-none">Daftar Transaksi Peminjaman</h3>
+    <h3 class="d-print-none fw-bold">
+        {{ Auth::user()->role == 'admin' ? 'Daftar Transaksi Peminjaman' : 'Riwayat Peminjaman Saya' }}
+    </h3>
     <div>
-        <button onclick="window.print()" class="btn btn-dark d-print-none">
+        <button onclick="window.print()" class="btn btn-dark d-print-none me-2">
             <i class="bi bi-printer"></i> Cetak Laporan
         </button>
-        <a href="{{ route('borrowings.create') }}" class="btn btn-primary d-print-none">+ Pinjam Aset Baru</a>
+        @if(Auth::user()->role == 'admin')
+            <a href="{{ route('borrowings.create') }}" class="btn btn-primary d-print-none">+ Pinjam Aset Baru</a>
+        @endif
     </div>
 </div>
 
-<div class="card mb-4 d-print-none">
+{{-- FILTER --}}
+<div class="card mb-4 d-print-none border-0 shadow-sm">
     <div class="card-body">
         <form action="{{ route('borrowings.index') }}" method="GET" class="row g-3">
             <div class="col-md-4">
-                <label class="form-label small">Dari Tanggal</label>
+                <label class="form-label small fw-bold">Dari Tanggal</label>
                 <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
             </div>
             <div class="col-md-4">
-                <label class="form-label small">Sampai Tanggal</label>
+                <label class="form-label small fw-bold">Sampai Tanggal</label>
                 <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
             </div>
             <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-secondary me-2">Filter</button>
-                <a href="{{ route('borrowings.index') }}" class="btn btn-outline-secondary">Reset</a>
+                <button type="submit" class="btn btn-primary me-2 px-4">Filter</button>
+                <a href="{{ route('borrowings.index') }}" class="btn btn-outline-secondary px-4">Reset</a>
             </div>
         </form>
     </div>
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success d-print-none">{{ session('success') }}</div>
+    <div class="alert alert-success d-print-none border-0 shadow-sm">{{ session('success') }}</div>
 @endif
 
-<div class="table-responsive">
-    <table class="table table-hover border">
-        <thead class="table-light">
-            <tr>
-                <th>Barang</th>
-                <th>Peminjam</th>
-                <th>Tgl Pinjam</th>
-                <th>Tgl Kembali</th>
-                <th>Status</th>
-                <th class="d-print-none">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($borrowings as $b)
-            <tr>
-                <td>
-                    <strong>{{ $b->asset->nama_aset }}</strong> <br> 
-                    <small class="text-muted">{{ $b->asset->kode_aset }}</small>
-                </td>
-                <td>{{ $b->nama_peminjam }}</td>
-                <td>{{ \Carbon\Carbon::parse($b->tanggal_pinjam)->format('d M Y') }}</td>
-                <td>
-                    {{ $b->tanggal_kembali ? \Carbon\Carbon::parse($b->tanggal_kembali)->format('d M Y') : '-' }}
-                </td>
-                <td>
-                    @if($b->status_peminjaman == 'aktif')
-                        <span class="badge bg-warning text-dark">Masih Dipinjam</span>
-                    @else
-                        <span class="badge bg-secondary">Selesai</span>
-                    @endif
-                </td>
-                <td class="d-print-none">
-                    @if($b->status_peminjaman == 'aktif')
-                        <form action="{{ route('borrowings.kembalikan', $b->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Konfirmasi pengembalian barang?')">
-                                Proses Kembali
-                            </button>
-                        </form>
-                    @else
-                        <span class="text-muted small">Sudah Kembali</span>
-                    @endif
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="6" class="text-center">Tidak ada data transaksi ditemukan.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+{{-- TABLE --}}
+<div class="bg-white rounded shadow-sm overflow-hidden border">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light text-uppercase small">
+                <tr>
+                    <th class="ps-3 text-center" style="width: 50px;">No</th>
+                    <th>Barang</th>
+                    <th>Peminjam</th>
+                    <th class="text-center">Tgl Pinjam</th>
+                    <th class="text-center">Tgl Kembali</th>
+                    <th class="text-center">Status</th>
+                    <th class="d-print-none text-center">Aksi / Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($borrowings as $b)
+                <tr>
+                    <td class="ps-3 text-center text-muted">
+                        {{ ($borrowings->currentPage() - 1) * $borrowings->perPage() + $loop->iteration }}
+                    </td>
+                    <td>
+                        <strong>{{ $b->asset->nama_aset }}</strong><br>
+                        <small class="text-muted">{{ $b->asset->kode_aset }}</small>
+                    </td>
+                    <td>{{ $b->nama_peminjam }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($b->tanggal_pinjam)->format('d M Y') }}</td>
+                    <td class="text-center">
+                        {{ $b->tanggal_kembali ? \Carbon\Carbon::parse($b->tanggal_kembali)->format('d M Y') : '-' }}
+                    </td>
+                    <td class="text-center">
+                        @php $status = strtolower($b->status_peminjaman); @endphp
+                        @if($status == 'pending')
+                            <span class="badge bg-info text-dark">Menunggu</span>
+                        @elseif(in_array($status, ['aktif', 'disetujui', 'dipinjam']))
+                            <span class="badge bg-warning text-dark">Dipinjam</span>
+                        @elseif($status == 'ditolak')
+                            <span class="badge bg-danger">Ditolak</span>
+                        @else
+                            <span class="badge bg-success">Selesai</span>
+                        @endif
+                    </td>
+                    <td class="d-print-none text-center">
+                        {{-- JIKA LOGIN SEBAGAI ADMIN --}}
+                        @if(Auth::user()->role == 'admin')
+                            @if($status == 'pending')
+                                <div class="d-flex justify-content-center gap-1">
+                                    <form action="{{ route('borrowings.approve', $b->id) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <button type="submit" class="btn btn-sm btn-success px-3">Setujui</button>
+                                    </form>
+                                    <form action="{{ route('borrowings.reject', $b->id) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger px-3">Tolak</button>
+                                    </form>
+                                </div>
+                            @elseif(in_array($status, ['aktif', 'disetujui', 'dipinjam']))
+                                <form action="{{ route('borrowings.kembalikan', $b->id) }}" method="POST">
+                                    @csrf @method('PUT')
+                                    <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Selesaikan peminjaman ini?')">
+                                        <i class="bi bi-check2-circle"></i> Selesaikan
+                                    </button>
+                                </form>
+                            @else
+                                <span class="text-muted small">Arsip</span>
+                            @endif
 
-{{-- TANDA TANGAN: Hanya muncul saat diprint --}}
-<div class="d-none d-print-block mt-5">
-    <div class="row">
-        <div class="col-8"></div>
-        <div class="col-4 text-center">
-            <p class="mb-0">Binjai, {{ date('d F Y') }}</p>
-            <p class="fw-bold">Mengetahui, <br> Pengelola Aset</p>
-            <div style="height: 80px;"></div>
-            <p class="fw-bold mb-0">( __________________________ )</p>
-            <p class="small">NIP. .................................</p>
-        </div>
+                        {{-- JIKA LOGIN SEBAGAI USER --}}
+                        @else
+                            @if($status == 'pending')
+                                <span class="text-muted small">Menunggu Admin</span>
+                            @elseif(in_array($status, ['aktif', 'disetujui', 'dipinjam']))
+                                <span class="text-primary small italic"><i class="bi bi-info-circle"></i> Sedang Digunakan</span>
+                            @elseif($status == 'selesai')
+                                <span class="text-success small fw-bold"><i class="bi bi-check-all"></i> Sudah Kembali</span>
+                            @else
+                                -
+                            @endif
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">Data tidak ditemukan.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    <div class="p-3 border-top d-print-none d-flex justify-content-between align-items-center">
+        <small class="text-muted">Menampilkan {{ $borrowings->firstItem() }} - {{ $borrowings->lastItem() }} dari {{ $borrowings->total() }} data</small>
+        {{ $borrowings->links('pagination::bootstrap-5') }}
     </div>
 </div>
-
-<style>
-    @media print {
-        /* Memaksa browser menampilkan warna latar belakang badge dan header tabel */
-        body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        .d-print-none { display: none !important; }
-        .d-none { display: block !important; }
-        
-        /* Menghilangkan border sidebar dan layout dashboard saat print */
-        #sidebar-wrapper, .navbar { display: none !important; }
-        #page-content-wrapper { padding: 0 !important; width: 100% !important; margin: 0 !important; }
-        
-        table { width: 100% !important; border: 1px solid #000 !important; }
-        th { background-color: #f8f9fa !important; border-bottom: 2px solid #000 !important; }
-        td, th { padding: 8px !important; border: 1px solid #000 !important; }
-    }
-</style>
 @endsection

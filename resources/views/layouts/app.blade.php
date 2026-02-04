@@ -161,7 +161,7 @@
                     <i class="bi bi-grid-1x2-fill me-3"></i> Dashboard
                 </a>
 
-                {{-- CEK APAKAH USER ADALAH ADMIN --}}
+                {{-- MENU UNTUK ADMIN --}}
                 @if(Auth::user()->role == 'admin')
                     <div class="sidebar-section-title">Aset & Inventaris</div>
                     <a class="list-group-item {{ request()->routeIs('assets.*') ? 'active' : '' }}" href="{{ route('assets.index') }}">
@@ -179,12 +179,11 @@
                     </a>
 
                     <div class="sidebar-section-title">Pengaturan</div>
-                    <a class="list-group-item {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                    <a class="list-group-item {{ request()->routeIs('users.*') ? 'error' : '' }}" href="{{ route('users.index') }}">
                         <i class="bi bi-person-gear me-3"></i> Kelola Admin
                     </a>
-
-                {{-- MENU KHUSUS UNTUK USER/STAFF --}}
                 @else
+                {{-- MENU UNTUK USER/STAFF --}}
                     <div class="sidebar-section-title">Layanan User</div>
                     <a class="list-group-item {{ request()->routeIs('user.assets.index') ? 'active' : '' }}" href="{{ route('user.assets.index') }}">
                         <i class="bi bi-search me-3"></i> Cari & Pinjam Aset
@@ -192,17 +191,13 @@
                     <a class="list-group-item {{ request()->routeIs('borrowings.index') ? 'active' : '' }}" href="{{ route('borrowings.index') }}">
                         <i class="bi bi-clock-history me-3"></i> Riwayat Saya
                     </a>
-
-                    <div class="sidebar-section-title">Personal</div>
-                    <a class="list-group-item {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="#">
-                        <i class="bi bi-person-bounding-box me-3"></i> Profil Saya
-                    </a>
-
-                    <div class="sidebar-section-title">Bantuan</div>
-                    <a class="list-group-item" href="#">
-                        <i class="bi bi-question-circle-fill me-3"></i> Panduan Sistem
-                    </a>
                 @endif
+
+                {{-- BAGIAN PERSONAL (Tampil untuk Admin & User) --}}
+                <div class="sidebar-section-title">Personal</div>
+                <a class="list-group-item {{ request()->routeIs('profile.index') ? 'active' : '' }}" href="{{ route('profile.index') }}">
+                    <i class="bi bi-person-bounding-box me-3"></i> Profil Saya
+                </a>
             </div>
 
             <div class="logout-section">
@@ -216,14 +211,16 @@
         <div id="page-content-wrapper">
             <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-2 d-print-none">
                 <div class="container-fluid">
-                    <button class="btn btn-sm btn-light border shadow-sm" id="sidebarToggle"><i class="bi bi-list fs-4"></i></button>
+                    <button class="btn btn-sm btn-light border shadow-sm" id="sidebarToggle">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
                     <div class="ms-auto d-flex align-items-center">
                         @auth
                         <div class="d-flex flex-column text-end me-3 d-none d-sm-block">
-                            <span class="fw-bold small lh-1">{{ Auth::user()->name }}</span>
+                            <span class="fw-bold small lh-1 text-dark">{{ Auth::user()->name }}</span>
                             <span class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;">{{ Auth::user()->role }}</span>
                         </div>
-                        <div class="vr me-3 d-none d-sm-block" style="height: 30px;"></div>
+                        <div class="vr me-3 d-none d-sm-block" style="height: 30px; opacity: 0.1;"></div>
                         <i class="bi bi-person-circle fs-4 text-primary"></i>
                         @endauth
                     </div>
