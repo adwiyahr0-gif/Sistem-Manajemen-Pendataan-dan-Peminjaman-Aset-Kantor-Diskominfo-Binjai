@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User; // Tambahkan ini agar bisa memanggil model User
 
 class AuthenticatedSessionController extends Controller
 {
@@ -24,11 +25,33 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // 1. Ambil data user berdasarkan email yang diinput
+        $user = User::where('email', $request->email)->first();
+
+        // 2. Validasi Role sebelum login
+        if ($user) {
+            // Jika user pilih 'admin' di dropdown tapi di database dia bukan 'admin'
+            if ($request->role === 'admin' && $user->role !== 'admin') {
+                return back()->with('error_popup', 'Akses Ditolak! Anda tidak terdaftar sebagai Administrator.');
+            }
+
+            // Jika user pilih 'staff' di dropdown tapi di database dia bukan 'staff'
+            if ($request->role === 'staff' && $user->role !== 'staff') {
+                return back()->with('error_popup', 'Akses Ditolak! Akun Anda tidak terdaftar sebagai Staff.');
+            }
+        }
+
+        // 3. Jika pengecekan role lewat, lanjutkan proses login bawaan Laravel
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // 4. Redirect berdasarkan role setelah login berhasil (Opsional tapi disarankan)
+        if (Auth::user()->role === 'admin') {
+            return redirect()->intended(route('dashboard'));
+        } else {
+            return redirect()->intended(route('users.index'));
+        }
     }
 
     /**

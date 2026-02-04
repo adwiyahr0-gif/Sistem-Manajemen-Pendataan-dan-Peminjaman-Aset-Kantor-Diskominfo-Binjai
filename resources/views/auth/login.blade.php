@@ -1,6 +1,8 @@
 @extends('layouts.guest')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
     @keyframes gradientShift {
         0% {
@@ -380,7 +382,6 @@
 </style>
 
 <div class="login-wrapper">
-    <!-- Background Effects -->
     <div class="background-effects">
         <div class="sparkle"></div>
         <div class="sparkle"></div>
@@ -398,7 +399,6 @@
     </div>
 
     <div class="login-card">
-        <!-- Logo Section -->
         <div class="logo-section">
             <div class="logo-circle">
                 <img src="{{ asset('images/binjai.png') }}" alt="Logo Binjai" class="logo-img">
@@ -407,11 +407,9 @@
             <div class="brand-desc">Sistem Manajemen Aset & Peminjaman<br>DISKOMINFO KOTA BINJAI</div>
         </div>
 
-        <!-- Login Form -->
         <form method="POST" action="{{ route('login') }}" id="loginForm">
             @csrf
 
-            <!-- Email Input -->
             <div class="form-group">
                 <label class="form-label">Email</label>
                 <div class="input-wrapper">
@@ -431,7 +429,6 @@
                 @enderror
             </div>
 
-            <!-- Password Input -->
             <div class="form-group">
                 <label class="form-label">Kata Sandi</label>
                 <div class="input-wrapper">
@@ -452,7 +449,6 @@
                 @enderror
             </div>
 
-            <!-- Role Dropdown -->
             <div class="form-group">
                 <label class="form-label">Pilih Role</label>
                 <div class="input-wrapper">
@@ -466,7 +462,6 @@
                 </div>
             </div>
 
-            <!-- Remember & Forgot -->
             <div class="remember-row">
                 <label class="remember-check">
                     <input type="checkbox" name="remember" id="remember_me">
@@ -477,18 +472,15 @@
                 @endif
             </div>
 
-            <!-- Login Button -->
             <button type="submit" class="btn-login">
                 <i class="bi bi-box-arrow-in-right me-2"></i>LOGIN
             </button>
 
-            <!-- Register Link -->
             <div class="register-text">
                 Belum punya akun? <a href="{{ route('register') }}">Daftar Sekarang</a>
             </div>
         </form>
 
-        <!-- Security Badge -->
         <div class="security-badge">
             <i class="bi bi-shield-check"></i>
             Sistem terenkripsi dan terlindungi
@@ -496,7 +488,6 @@
     </div>
 </div>
 
-<!-- Copyright -->
 <div class="copyright">
     © 2025 <a href="#">DISKOMINFO Kota Binjai</a>
 </div>
@@ -518,15 +509,40 @@
         }
     }
 
-    // Form Validation
+    // Form Validation & Dropdown Check
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         const roleSelect = document.getElementById('roleSelect');
         if (!roleSelect.value) {
             e.preventDefault();
-            alert('Silakan pilih role terlebih dahulu!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian',
+                text: 'Silakan pilih role terlebih dahulu!',
+                confirmButtonColor: '#3b82f6'
+            });
             roleSelect.focus();
             return false;
         }
     });
+
+    // POP-UP NOTIFIKASI DARI CONTROLLER (Error Role/Akses)
+    @if(session('error_popup'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Akses Ditolak',
+            text: "{{ session('error_popup') }}",
+            confirmButtonColor: '#d33',
+        });
+    @endif
+
+    // Notifikasi Error Login Umum (Email/Password Salah)
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Gagal',
+            text: 'Email atau Kata Sandi yang Anda masukkan salah.',
+            confirmButtonColor: '#3b82f6',
+        });
+    @endif
 </script>
 @endsection
