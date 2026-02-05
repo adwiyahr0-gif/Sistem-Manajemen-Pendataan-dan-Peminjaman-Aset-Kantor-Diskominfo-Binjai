@@ -450,11 +450,11 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Pilih Role</label>
+                <label class="form-label">Login Sebagai</label>
                 <div class="input-wrapper">
                     <i class="bi bi-person-circle input-icon"></i>
                     <select name="role" id="roleSelect" class="form-select" required>
-                        <option value="" disabled selected>-- Pilih Role Anda --</option>
+                        <option value="" disabled selected>-- Login Sebagai --</option>
                         <option value="admin">Administrator</option>
                         <option value="staff">Staff/Pegawai</option>
                     </select>

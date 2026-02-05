@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use App\Models\User; // Tambahkan ini agar bisa memanggil model User
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,33 +25,52 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // 1. Ambil data user berdasarkan email yang diinput
+        // 1. Ambil data user & ubah role database ke huruf kecil agar konsisten saat dicek
         $user = User::where('email', $request->email)->first();
 
-        // 2. Validasi Role sebelum login
-        if ($user) {
-            // Jika user pilih 'admin' di dropdown tapi di database dia bukan 'admin'
-            if ($request->role === 'admin' && $user->role !== 'admin') {
+        // 2. Cek apakah user ada
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'Email tidak terdaftar di sistem kami.',
+            ])->withInput($request->only('email'));
+        }
+
+        // Ambil role dari DB dan ubah ke huruf kecil (mengatasi masalah 'USER' vs 'user')
+        $dbRole = strtolower($user->role);
+
+        // 3. Validasi Role (Logika Fleksibel)
+        if ($request->role === 'admin') {
+            if ($dbRole !== 'admin') {
                 return back()->with('error_popup', 'Akses Ditolak! Anda tidak terdaftar sebagai Administrator.');
             }
-
-            // Jika user pilih 'staff' di dropdown tapi di database dia bukan 'staff'
-            if ($request->role === 'staff' && $user->role !== 'staff') {
+        } 
+        
+        if ($request->role === 'staff') {
+            // Kita izinkan login jika di DB tertulis 'staff' ATAU 'user' (sesuai screenshot kamu)
+            if ($dbRole !== 'staff' && $dbRole !== 'user') {
                 return back()->with('error_popup', 'Akses Ditolak! Akun Anda tidak terdaftar sebagai Staff.');
             }
         }
 
-        // 3. Jika pengecekan role lewat, lanjutkan proses login bawaan Laravel
-        $request->authenticate();
+        // 4. Proses Login dengan "Remember Me"
+        $remember = $request->boolean('remember');
 
-        $request->session()->regenerate();
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
+            $request->session()->regenerate();
 
-        // 4. Redirect berdasarkan role setelah login berhasil (Opsional tapi disarankan)
-        if (Auth::user()->role === 'admin') {
-            return redirect()->intended(route('dashboard'));
-        } else {
-            return redirect()->intended(route('users.index'));
+            // 5. Redirect berdasarkan role
+            // Gunakan $dbRole yang sudah kita kecilkan hurufnya tadi
+            if ($dbRole === 'admin') {
+                return redirect()->intended(route('dashboard'));
+            } else {
+                return redirect()->intended(route('users.index'));
+            }
         }
+
+        // 6. Jika Password Salah
+        return back()->withErrors([
+            'email' => __('auth.failed'),
+        ])->withInput($request->only('email', 'remember'));
     }
 
     /**
@@ -60,9 +79,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');
