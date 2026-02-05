@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Http\Controllers;
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,24 +9,15 @@ class Asset extends Model
 {
     use HasFactory;
 
-    /**
-     * fillable: Kolom yang diizinkan untuk diisi secara massal.
-     * Pastikan 'image' sudah masuk agar foto bisa tersimpan ke database.
-     */
+    // Pastikan nama tabel di DB adalah 'assets' sesuai screenshot phpMyAdmin Anda
+    protected $table = 'assets'; 
+
     protected $fillable = [
-        'nama_aset',
+        'nama_aset', 
         'kode_aset',
         'status',
         'kondisi',
-        'image', // TAMBAHKAN INI
+        'image',
+        'deskripsi',
     ];
-
-    /**
-     * Relasi ke Tabel Borrowings (Opsional tapi berguna)
-     * Memungkinkan kita melihat riwayat peminjaman dari aset ini.
-     */
-    public function borrowings()
-    {
-        return $this->hasMany(Borrowing::class);
-    }
 }

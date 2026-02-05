@@ -484,10 +484,6 @@
     </div>
 </div>
 
-<div class="copyright">
-    © 2025 <a href="#">DISKOMINFO Kota Binjai</a>
-</div>
-
 <script>
     // Toggle Password Visibility
     function togglePassword() {

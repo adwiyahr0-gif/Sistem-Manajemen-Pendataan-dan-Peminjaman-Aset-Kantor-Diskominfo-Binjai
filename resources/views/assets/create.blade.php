@@ -61,12 +61,12 @@
                             </div>
                         </div>
 
-                        {{-- Tambahan Input Foto (Opsional, agar katalog user bagus) --}}
+                        {{-- Tambahan Input images (Opsional, agar katalog user bagus) --}}
                         <div class="mb-3">
                             <label class="form-label fw-bold">Foto Aset <span class="text-muted small">(Opsional)</span></label>
-                            <input type="file" name="foto" class="form-control @error('foto') is-invalid @enderror" accept="image/*">
+                            <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
                             <div class="form-text">Format: JPG, PNG, JPEG. Maksimal 5MB.</div>
-                            @error('foto')
+                            @error('image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

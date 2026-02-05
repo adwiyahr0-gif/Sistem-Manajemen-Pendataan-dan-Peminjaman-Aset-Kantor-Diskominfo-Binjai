@@ -10,19 +10,21 @@ class AssetCatalogController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Ambil aset yang statusnya 'tersedia'
+        // Ambil data yang statusnya 'tersedia'
+        // Kita gunakan query builder agar lebih fleksibel
         $query = Asset::where('status', 'tersedia');
 
-        // 2. Fitur Pencarian (Mencari berdasarkan nama aset)
+        // Fitur Pencarian di kolom 'nama_aset'
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('nama_aset', 'like', '%' . $request->search . '%');
         }
 
-        // 3. Paginate agar tidak terlalu berat (8 data per halaman)
         $assets = $query->latest()->paginate(8);
 
-        // 4. MENGARAHKAN KE FOLDER 'users' (Sesuai screenshot folder kamu)
-        // Jika nanti kamu rename folder 'users' jadi 'user', hapus huruf 's' di bawah ini
+        // --- CARA CEK DATA (Hapus // di bawah ini jika halaman masih kosong) ---
+        // dd($assets); 
+
+        // Pastikan file ini ada di: resources/views/users/assets/index.blade.php
         return view('users.assets.index', compact('assets'));
     }
 }
