@@ -269,6 +269,11 @@
         outline: none;
     }
 
+    /* Penambahan CSS agar email otomatis huruf kecil */
+    .form-control-email {
+        text-transform: lowercase;
+    }
+
     .form-control::placeholder {
         color: #94a3b8;
     }
@@ -401,7 +406,6 @@
 </style>
 
 <div class="register-wrapper">
-    <!-- Background Effects -->
     <div class="background-effects">
         <div class="sparkle"></div>
         <div class="sparkle"></div>
@@ -419,7 +423,6 @@
     </div>
 
     <div class="register-card">
-        <!-- Logo Section -->
         <div class="logo-section">
             <div class="logo-circle">
                 <img src="{{ asset('images/binjai.png') }}" alt="Logo Binjai" class="logo-img">
@@ -428,11 +431,9 @@
             <div class="brand-desc">Sistem Manajemen Aset & Peminjaman<br>DISKOMINFO KOTA BINJAI</div>
         </div>
 
-        <!-- Register Form -->
         <form method="POST" action="{{ route('register') }}" id="registerForm">
             @csrf
 
-            <!-- Name Input -->
             <div class="form-group">
                 <label class="form-label">Nama Lengkap</label>
                 <div class="input-wrapper">
@@ -453,7 +454,6 @@
                 @enderror
             </div>
 
-            <!-- Email Input -->
             <div class="form-group">
                 <label class="form-label">Email</label>
                 <div class="input-wrapper">
@@ -461,8 +461,10 @@
                     <input 
                         type="email" 
                         name="email" 
-                        class="form-control @error('email') is-invalid @enderror" 
+                        {{-- Penambahan class form-control-email dan atribut oninput --}}
+                        class="form-control form-control-email @error('email') is-invalid @enderror" 
                         placeholder="nama@diskominfo-binjai.go.id"
+                        oninput="this.value = this.value.toLowerCase()"
                         value="{{ old('email') }}"
                         required>
                 </div>
@@ -473,7 +475,6 @@
                 @enderror
             </div>
 
-            <!-- Password Input -->
             <div class="form-group">
                 <label class="form-label">Kata Sandi</label>
                 <div class="input-wrapper">
@@ -494,7 +495,6 @@
                 @enderror
             </div>
 
-            <!-- Password Confirmation Input -->
             <div class="form-group">
                 <label class="form-label">Konfirmasi Kata Sandi</label>
                 <div class="input-wrapper">
@@ -510,18 +510,15 @@
                 </div>
             </div>
 
-            <!-- Register Button -->
             <button type="submit" class="btn-register">
                 <i class="bi bi-person-plus me-2"></i>DAFTAR AKUN
             </button>
 
-            <!-- Login Link -->
             <div class="login-link">
                 Sudah punya akun? <a href="{{ route('login') }}">Masuk Sekarang</a>
             </div>
         </form>
 
-        <!-- Security Badge -->
         <div class="security-badge">
             <i class="bi bi-shield-check"></i>
             Data Anda aman dan terenkripsi
@@ -529,7 +526,6 @@
     </div>
 </div>
 
-<!-- Copyright -->
 <div class="copyright">
     © 2025 <a href="#">DISKOMINFO Kota Binjai</a>
 </div>

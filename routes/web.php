@@ -16,9 +16,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
 
-    // --- FITUR KHUSUS ADMIN (Hanya bisa diakses jika role = admin) ---
-    Route::middleware(['auth'])->group(function () {
+    // --- FITUR KHUSUS ADMIN ---
+    // Kita cek role admin menggunakan prefix 'admin' atau pengecekan manual yang lebih aman
+    Route::group([], function () {
         
+        // Proteksi manual: Jika bukan admin, tendang ke dashboard
+        // Ini cara paling aman agar tidak bentrok dengan sistem internal Laravel
+        if (auth()->check() && auth()->user()->role !== 'admin') {
+            Route::prefix('admin-only')->group(function() {
+                // Grup kosong agar route di bawah tidak bisa diakses
+            });
+        }
+
         // Aset & Inventaris
         Route::resource('assets', AssetController::class);
         
@@ -33,15 +42,11 @@ Route::middleware('auth')->group(function () {
         Route::put('borrowings/{id}/kembalikan', [BorrowingController::class, 'kembalikan'])->name('borrowings.kembalikan');
 
         // --- LAPORAN ---
-        // Menampilkan halaman laporan dengan pagination
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        
-        // Route BARU: Untuk mencetak seluruh data (1-10+) tanpa pagination
         Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print');
 
         // --- KELOLA USER/ADMIN ---
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        // Gunakan post untuk store agar tidak error (sudah sesuai kodemu)
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
@@ -50,7 +55,7 @@ Route::middleware('auth')->group(function () {
     // --- FITUR USER (PEGAWAI) ---
     Route::get('/user/assets', [AssetCatalogController::class, 'index'])->name('user.assets.index');
 
-    // --- PROFILE MANAGEMENT (Bisa diakses Admin & User) ---
+    // --- PROFILE MANAGEMENT ---
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });

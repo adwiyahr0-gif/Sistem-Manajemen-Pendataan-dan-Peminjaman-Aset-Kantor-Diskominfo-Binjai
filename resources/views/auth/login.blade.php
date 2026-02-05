@@ -466,10 +466,6 @@
                 <label class="remember-check">
                     <input type="checkbox" name="remember" id="remember_me">
                     <span>Ingat saya</span>
-                </label>
-                @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" class="forgot-link">Lupa Password?</a>
-                @endif
             </div>
 
             <button type="submit" class="btn-login">
