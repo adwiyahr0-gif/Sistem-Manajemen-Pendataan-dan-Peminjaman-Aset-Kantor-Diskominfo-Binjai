@@ -359,6 +359,209 @@
         color: #60a5fa;
     }
 
+    /* ===== BUBBLE ANIMATIONS (TAMBAHAN) ===== */
+    .bubble-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .bubble {
+        position: absolute;
+        bottom: -100px;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.03));
+        border-radius: 50%;
+        opacity: 0.5;
+        animation: riseBubble linear infinite;
+        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.08),
+                    0 0 15px rgba(255, 255, 255, 0.03);
+    }
+
+    @keyframes riseBubble {
+        0% {
+            transform: translateY(0) translateX(0) scale(1);
+            opacity: 0;
+        }
+        10% {
+            opacity: 0.5;
+        }
+        90% {
+            opacity: 0.3;
+        }
+        100% {
+            transform: translateY(-110vh) translateX(var(--drift)) scale(1.1);
+            opacity: 0;
+        }
+    }
+
+    .bubble:nth-child(1) {
+        left: 15%;
+        width: 25px;
+        height: 25px;
+        animation-duration: 14s;
+        animation-delay: 0s;
+        --drift: 20px;
+    }
+
+    .bubble:nth-child(2) {
+        left: 45%;
+        width: 30px;
+        height: 30px;
+        animation-duration: 16s;
+        animation-delay: 3s;
+        --drift: -25px;
+    }
+
+    .bubble:nth-child(3) {
+        left: 75%;
+        width: 22px;
+        height: 22px;
+        animation-duration: 13s;
+        animation-delay: 1.5s;
+        --drift: 18px;
+    }
+
+    .bubble:nth-child(4) {
+        left: 30%;
+        width: 28px;
+        height: 28px;
+        animation-duration: 15s;
+        animation-delay: 5s;
+        --drift: -20px;
+    }
+
+    .bubble:nth-child(5) {
+        left: 60%;
+        width: 26px;
+        height: 26px;
+        animation-duration: 14.5s;
+        animation-delay: 2.5s;
+        --drift: 22px;
+    }
+
+    /* ===== CUSTOM SWEETALERT2 STYLING - FORMAL & PROFESSIONAL ===== */
+    .swal2-popup {
+        border-radius: 12px !important;
+        padding: 0 !important;
+        width: 400px !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25) !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    }
+
+    .swal2-icon {
+        margin: 2rem auto 0 !important;
+        width: 70px !important;
+        height: 70px !important;
+        border-width: 3px !important;
+    }
+
+    .swal2-icon.swal2-error {
+        border-color: #dc2626 !important;
+        color: #dc2626 !important;
+    }
+
+    .swal2-icon.swal2-warning {
+        border-color: #f59e0b !important;
+        color: #f59e0b !important;
+    }
+
+    .swal2-icon.swal2-success {
+        border-color: #10b981 !important;
+        color: #10b981 !important;
+    }
+
+    .swal2-icon.swal2-info {
+        border-color: #3b82f6 !important;
+        color: #3b82f6 !important;
+    }
+
+    .swal2-title {
+        font-size: 1.35rem !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin: 1.5rem 0 0.5rem !important;
+        padding: 0 2rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .swal2-html-container {
+        font-size: 0.95rem !important;
+        color: #64748b !important;
+        margin: 0 !important;
+        padding: 0.5rem 2rem 2rem !important;
+        line-height: 1.6 !important;
+        font-weight: 400 !important;
+    }
+
+    .swal2-actions {
+        margin: 0 !important;
+        padding: 1.5rem 2rem 2rem !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+        background: #f8fafc !important;
+        border-radius: 0 0 12px 12px !important;
+    }
+
+    .swal2-confirm {
+        border-radius: 8px !important;
+        padding: 0.7rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        border: none !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        transition: all 0.2s ease !important;
+        min-width: 120px !important;
+    }
+
+    .swal2-confirm:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .swal2-confirm:active {
+        transform: translateY(0) !important;
+    }
+
+    .swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.65) !important;
+    }
+
+    /* Animasi Smooth */
+    @keyframes smoothFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes smoothFadeOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+    }
+
+    .swal2-show {
+        animation: smoothFadeIn 0.3s ease-out !important;
+    }
+
+    .swal2-hide {
+        animation: smoothFadeOut 0.2s ease-in !important;
+    }
+
     @media (max-width: 480px) {
         .login-card {
             width: 90%;
@@ -378,8 +581,28 @@
         .brand-name {
             font-size: 1.35rem;
         }
+
+        .swal2-popup {
+            width: 90% !important;
+        }
+
+        .swal2-title {
+            font-size: 1.2rem !important;
+        }
+
+        .swal2-html-container {
+            font-size: 0.88rem !important;
+        }
     }
 </style>
+
+<div class="bubble-container">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
 
 <div class="login-wrapper">
     <div class="background-effects">
@@ -466,6 +689,7 @@
                 <label class="remember-check">
                     <input type="checkbox" name="remember" id="remember_me">
                     <span>Ingat saya</span>
+                </label>
             </div>
 
             <button type="submit" class="btn-login">
@@ -508,9 +732,10 @@
             e.preventDefault();
             Swal.fire({
                 icon: 'warning',
-                title: 'Perhatian',
-                text: 'Silakan pilih role terlebih dahulu!',
-                confirmButtonColor: '#3b82f6'
+                title: 'Pilih Role Login',
+                text: 'Silakan pilih role Anda sebagai Administrator atau Staff/Pegawai untuk melanjutkan.',
+                confirmButtonColor: '#f59e0b',
+                confirmButtonText: 'Mengerti'
             });
             roleSelect.focus();
             return false;
@@ -522,8 +747,9 @@
         Swal.fire({
             icon: 'error',
             title: 'Akses Ditolak',
-            text: "{{ session('error_popup') }}",
-            confirmButtonColor: '#d33',
+            text: '{{ session("error_popup") }}',
+            confirmButtonColor: '#dc2626',
+            confirmButtonText: 'Tutup'
         });
     @endif
 
@@ -532,8 +758,9 @@
         Swal.fire({
             icon: 'error',
             title: 'Login Gagal',
-            text: 'Email atau Kata Sandi yang Anda masukkan salah.',
-            confirmButtonColor: '#3b82f6',
+            text: 'Email atau kata sandi yang Anda masukkan salah. Silakan periksa kembali kredensial login Anda.',
+            confirmButtonColor: '#dc2626',
+            confirmButtonText: 'Coba Lagi'
         });
     @endif
 </script>

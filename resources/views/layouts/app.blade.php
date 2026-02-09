@@ -135,6 +135,16 @@
         #page-content-wrapper { min-width: 100vw; }
         body.sb-sidenav-toggled #sidebar-wrapper { margin-left: 0; }
 
+        /* Custom Dropdown Style */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+        }
+        .dropdown-item:active {
+            background-color: var(--sidebar-bg);
+        }
+
         @media (min-width: 768px) {
             #sidebar-wrapper { margin-left: 0; }
             #page-content-wrapper { min-width: 0; width: 100%; }
@@ -213,12 +223,32 @@
                     </button>
                     <div class="ms-auto d-flex align-items-center">
                         @auth
-                        <div class="d-flex flex-column text-end me-3 d-none d-sm-block">
-                            <span class="fw-bold small lh-1 text-dark">{{ Auth::user()->name }}</span>
-                            <span class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;">{{ Auth::user()->role }}</span>
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="d-flex flex-column text-end me-3 d-none d-sm-block">
+                                    <span class="fw-bold small lh-1 text-dark">{{ Auth::user()->name }}</span>
+                                    <span class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;">{{ Auth::user()->role }}</span>
+                                </div>
+                                <div class="vr me-3 d-none d-sm-block" style="height: 30px; opacity: 0.1;"></div>
+                                <i class="bi bi-person-circle fs-4 text-primary"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="profileDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('profile.index') }}">
+                                        <i class="bi bi-person me-2"></i> Profil Saya
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Keluar Sistem
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="vr me-3 d-none d-sm-block" style="height: 30px; opacity: 0.1;"></div>
-                        <i class="bi bi-person-circle fs-4 text-primary"></i>
                         @endauth
                     </div>
                 </div>

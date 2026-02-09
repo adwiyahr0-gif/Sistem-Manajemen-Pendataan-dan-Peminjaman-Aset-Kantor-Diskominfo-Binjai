@@ -1,56 +1,18 @@
 @extends('layouts.guest')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
-    @keyframes particleFloat {
-        0% { 
-            transform: translateY(100vh) scale(0);
-            opacity: 0;
-        }
-        10% {
-            opacity: 1;
-            transform: translateY(90vh) scale(1);
-        }
-        90% {
-            opacity: 1;
-        }
-        100% { 
-            transform: translateY(-10vh) scale(0);
-            opacity: 0;
-        }
-    }
-
-    @keyframes sparkle {
-        0%, 100% {
-            opacity: 0;
-            transform: scale(0) rotate(0deg);
-        }
-        50% {
-            opacity: 1;
-            transform: scale(1.5) rotate(180deg);
-        }
-    }
-
-    @keyframes wave {
-        0%, 100% {
-            transform: translateX(-50%) translateY(0) scale(1);
-        }
-        50% {
-            transform: translateX(-50%) translateY(-30px) scale(1.05);
-        }
-    }
-
-    @keyframes slideRight {
+    @keyframes gradientShift {
         0% {
-            transform: translateX(-100%);
-            opacity: 0;
+            background-position: 0% 50%;
         }
         50% {
-            opacity: 0.8;
+            background-position: 100% 50%;
         }
         100% {
-            transform: translateX(100%);
-            opacity: 0;
+            background-position: 0% 50%;
         }
     }
 
@@ -64,27 +26,6 @@
         50% { transform: translateY(-15px); }
     }
 
-    @keyframes floatBig {
-        0%, 100% { transform: translateY(0px) scale(1); }
-        50% { transform: translateY(-30px) scale(1.1); }
-    }
-
-    @keyframes pulse {
-        0%, 100% { 
-            transform: scale(1);
-            opacity: 0.5;
-        }
-        50% { 
-            transform: scale(1.3);
-            opacity: 0.8;
-        }
-    }
-
-    @keyframes rotate {
-        from { transform: translate(-50%, -50%) rotate(0deg); }
-        to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
     * {
         margin: 0;
         padding: 0;
@@ -95,7 +36,9 @@
         margin: 0;
         padding: 0;
         min-height: 100vh;
-        background: #00008B;
+        background: linear-gradient(-45deg, #00008B, #000080, #0000CD, #1e3a8a, #00008B);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -104,30 +47,16 @@
         overflow: hidden;
     }
 
+    /* Overlay for depth */
     body::before {
         content: '';
         position: absolute;
-        top: 10%;
-        right: 10%;
-        width: 350px;
-        height: 350px;
-        background: radial-gradient(circle, rgba(100, 149, 237, 0.4) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: pulse 5s ease-in-out infinite;
-        filter: blur(50px);
-    }
-
-    body::after {
-        content: '';
-        position: absolute;
-        bottom: 10%;
-        left: 10%;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(135, 206, 250, 0.35) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: pulse 6s ease-in-out infinite 1s;
-        filter: blur(50px);
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+        pointer-events: none;
     }
 
     /* Container for all effects - now empty */
@@ -153,6 +82,7 @@
         padding: 1rem 0;
     }
 
+    /* Floating orb 1 */
     .register-wrapper::before {
         content: '';
         position: absolute;
@@ -167,6 +97,7 @@
         filter: blur(20px);
     }
 
+    /* Floating orb 2 */
     .register-wrapper::after {
         content: '';
         position: absolute;
@@ -187,7 +118,7 @@
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 18px;
-        width: 380px;
+        width: 320px;
         padding: 1.5rem 1.25rem;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     }
@@ -198,8 +129,8 @@
     }
 
     .logo-circle {
-        width: 75px;
-        height: 75px;
+        width: 80px;
+        height: 80px;
         background: white;
         border-radius: 50%;
         display: inline-flex;
@@ -211,13 +142,13 @@
     }
 
     .logo-img {
-        width: 55px;
-        height: 55px;
+        width: 58px;
+        height: 58px;
         object-fit: contain;
     }
 
     .brand-name {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-weight: 700;
         color: #fff;
         margin-bottom: 0.3rem;
@@ -225,21 +156,21 @@
     }
 
     .brand-desc {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         color: rgba(255, 255, 255, 0.7);
         line-height: 1.3;
     }
 
     .form-group {
-        margin-bottom: 0.7rem;
+        margin-bottom: 0.75rem;
     }
 
     .form-label {
         display: block;
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         font-weight: 600;
         color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.35rem;
     }
 
     .input-wrapper {
@@ -252,24 +183,24 @@
         top: 50%;
         transform: translateY(-50%);
         color: #64748b;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         z-index: 2;
         pointer-events: none;
     }
 
     .form-control {
         width: 100%;
-        padding: 0.55rem 2.3rem 0.55rem 2.3rem;
+        padding: 0.6rem 2.3rem 0.6rem 2.3rem;
         background: rgba(255, 255, 255, 0.95);
         border: 1.5px solid rgba(255, 255, 255, 0.3);
         border-radius: 8px;
         color: #1e293b;
-        font-size: 0.78rem;
+        font-size: 0.8rem;
         transition: all 0.3s ease;
         outline: none;
     }
 
-    /* Penambahan CSS agar email otomatis huruf kecil */
+    /* Email otomatis huruf kecil */
     .form-control-email {
         text-transform: lowercase;
     }
@@ -295,7 +226,7 @@
         transform: translateY(-50%);
         color: #64748b;
         cursor: pointer;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         transition: all 0.3s ease;
         z-index: 2;
     }
@@ -306,18 +237,17 @@
 
     .btn-register {
         width: 100%;
-        padding: 0.6rem;
+        padding: 0.65rem;
         background: linear-gradient(135deg, #3b82f6, #2563eb);
         border: none;
         border-radius: 8px;
         color: #fff;
-        font-size: 0.8rem;
+        font-size: 0.825rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        margin-top: 0.5rem;
-        margin-bottom: 0.7rem;
+        margin-bottom: 0.75rem;
     }
 
     .btn-register:hover {
@@ -331,7 +261,7 @@
 
     .login-link {
         text-align: center;
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         color: rgba(255, 255, 255, 0.6);
     }
 
@@ -348,10 +278,10 @@
 
     .security-badge {
         text-align: center;
-        margin-top: 0.8rem;
-        padding-top: 0.7rem;
+        margin-top: 0.85rem;
+        padding-top: 0.75rem;
         border-top: 1px solid rgba(255, 255, 255, 0.15);
-        font-size: 0.68rem;
+        font-size: 0.7rem;
         color: rgba(255, 255, 255, 0.7);
     }
 
@@ -383,6 +313,91 @@
         color: #60a5fa;
     }
 
+    /* ===== BUBBLE ANIMATIONS (TAMBAHAN) ===== */
+    .bubble-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .bubble {
+        position: absolute;
+        bottom: -100px;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.03));
+        border-radius: 50%;
+        opacity: 0.5;
+        animation: riseBubble linear infinite;
+        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.08),
+                    0 0 15px rgba(255, 255, 255, 0.03);
+    }
+
+    @keyframes riseBubble {
+        0% {
+            transform: translateY(0) translateX(0) scale(1);
+            opacity: 0;
+        }
+        10% {
+            opacity: 0.5;
+        }
+        90% {
+            opacity: 0.3;
+        }
+        100% {
+            transform: translateY(-110vh) translateX(var(--drift)) scale(1.1);
+            opacity: 0;
+        }
+    }
+
+    .bubble:nth-child(1) {
+        left: 15%;
+        width: 25px;
+        height: 25px;
+        animation-duration: 14s;
+        animation-delay: 0s;
+        --drift: 20px;
+    }
+
+    .bubble:nth-child(2) {
+        left: 45%;
+        width: 30px;
+        height: 30px;
+        animation-duration: 16s;
+        animation-delay: 3s;
+        --drift: -25px;
+    }
+
+    .bubble:nth-child(3) {
+        left: 75%;
+        width: 22px;
+        height: 22px;
+        animation-duration: 13s;
+        animation-delay: 1.5s;
+        --drift: 18px;
+    }
+
+    .bubble:nth-child(4) {
+        left: 30%;
+        width: 28px;
+        height: 28px;
+        animation-duration: 15s;
+        animation-delay: 5s;
+        --drift: -20px;
+    }
+
+    .bubble:nth-child(5) {
+        left: 60%;
+        width: 26px;
+        height: 26px;
+        animation-duration: 14.5s;
+        animation-delay: 2.5s;
+        --drift: 22px;
+    }
+
     @media (max-width: 480px) {
         .register-card {
             width: 90%;
@@ -390,20 +405,28 @@
         }
 
         .logo-circle {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
         }
 
         .logo-img {
-            width: 50px;
-            height: 50px;
+            width: 58px;
+            height: 58px;
         }
 
         .brand-name {
-            font-size: 1.2rem;
+            font-size: 1.35rem;
         }
     }
 </style>
+
+<div class="bubble-container">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
 
 <div class="register-wrapper">
     <div class="background-effects">
@@ -461,7 +484,6 @@
                     <input 
                         type="email" 
                         name="email" 
-                        {{-- Penambahan class form-control-email dan atribut oninput --}}
                         class="form-control form-control-email @error('email') is-invalid @enderror" 
                         placeholder="nama@diskominfo-binjai.go.id"
                         oninput="this.value = this.value.toLowerCase()"
@@ -526,10 +548,6 @@
     </div>
 </div>
 
-<div class="copyright">
-    © 2025 <a href="#">DISKOMINFO Kota Binjai</a>
-</div>
-
 <script>
     // Toggle Password Visibility
     function togglePasswordVisibility(inputId, iconId) {
@@ -546,5 +564,25 @@
             toggleIcon.classList.add('bi-eye');
         }
     }
+
+    // Notifikasi Error Register (jika ada)
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Pendaftaran Gagal',
+            html: '<ul style="text-align: left; padding-left: 20px;">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
+            confirmButtonColor: '#3b82f6',
+        });
+    @endif
+
+    // Notifikasi Sukses Register (jika ada)
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#10b981',
+        });
+    @endif
 </script>
 @endsection
