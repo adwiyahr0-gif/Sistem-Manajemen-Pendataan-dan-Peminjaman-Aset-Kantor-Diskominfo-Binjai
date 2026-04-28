@@ -21,6 +21,11 @@ class BorrowingController extends Controller
             $query->where('user_id', Auth::id());
         }
 
+        // --- TAMBAHAN: Filter Nama Peminjam ---
+        if ($request->filled('nama_peminjam')) {
+            $query->where('nama_peminjam', 'LIKE', '%' . $request->nama_peminjam . '%');
+        }
+
         // Fitur Filter Tanggal
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('tanggal_pinjam', [$request->start_date, $request->end_date]);
@@ -28,7 +33,8 @@ class BorrowingController extends Controller
 
         // MENGGUNAKAN PAGINATE BUKAN GET
         // Kita set 10 data per halaman
-        $borrowings = $query->latest()->paginate(10);
+        // Menambahkan withQueryString() agar pencarian/filter tidak hilang saat ganti halaman
+        $borrowings = $query->latest()->paginate(10)->withQueryString();
 
         return view('borrowings.index', compact('borrowings'));
     }
@@ -60,7 +66,7 @@ class BorrowingController extends Controller
         ]);
 
         // --- TAMBAHAN: LOGIKA LIMIT PEMINJAMAN ---
-        $batasMaksimal = 5; // Ubah angka ini ke 10 jika ingin batas 10
+        $batasMaksimal = 5; 
         
         // Menghitung jumlah pinjaman user yang belum selesai
         $jumlahPinjamanAktif = Borrowing::where('user_id', Auth::id())

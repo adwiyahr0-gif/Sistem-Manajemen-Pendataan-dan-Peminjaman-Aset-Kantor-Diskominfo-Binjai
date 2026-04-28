@@ -31,15 +31,20 @@
 <div class="card mb-4 d-print-none border-0 shadow-sm">
     <div class="card-body">
         <form action="{{ route('borrowings.index') }}" method="GET" class="row g-3">
-            <div class="col-md-4">
+            {{-- TAMBAHAN KOLOM PENCARIAN NAMA PEMINJAM --}}
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Nama Peminjam</label>
+                <input type="text" name="nama_peminjam" class="form-control" placeholder="Cari nama..." value="{{ request('nama_peminjam') }}">
+            </div>
+            <div class="col-md-3">
                 <label class="form-label small fw-bold">Dari Tanggal</label>
                 <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label small fw-bold">Sampai Tanggal</label>
                 <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
             </div>
-            <div class="col-md-4 d-flex align-items-end">
+            <div class="col-md-3 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2 px-4">Filter</button>
                 <a href="{{ route('borrowings.index') }}" class="btn btn-outline-secondary px-4">Reset</a>
             </div>
@@ -117,7 +122,6 @@
                                 <span class="text-muted small">Arsip</span>
                             @endif
                         @else
-                            {{-- Tampilan untuk User (Hanya Keterangan) --}}
                             @if($status == 'pending')
                                 <span class="text-muted small">Menunggu Admin</span>
                             @elseif(in_array($status, ['aktif', 'disetujui', 'dipinjam']))
@@ -139,8 +143,8 @@
         </table>
     </div>
     <div class="p-3 border-top d-print-none d-flex justify-content-between align-items-center">
-        <small class="text-muted">Menampilkan {{ $borrowings->firstItem() }} - {{ $borrowings->lastItem() }} dari {{ $borrowings->total() }} data</small>
-        {{ $borrowings->links('pagination::bootstrap-5') }}
+        <small class="text-muted">Menampilkan {{ $borrowings->firstItem() ?? 0 }} - {{ $borrowings->lastItem() ?? 0 }} dari {{ $borrowings->total() }} data</small>
+        {{ $borrowings->appends(request()->input())->links('pagination::bootstrap-5') }}
     </div>
 </div>
 @endsection

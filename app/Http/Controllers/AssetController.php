@@ -9,9 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class AssetController extends Controller
 {
-    public function index() 
+    // Saya memodifikasi bagian ini agar bisa menangkap request pencarian
+    public function index(Request $request) 
     {
-        $assets = Asset::latest()->paginate(10); 
+        // Mulai query untuk asset
+        $query = Asset::query();
+
+        // Logika untuk mencari berdasarkan nama atau kode aset
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_aset', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('kode_aset', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Jalankan paginate dengan withQueryString agar pencarian tidak hilang saat pindah halaman
+        $assets = $query->latest()->paginate(10)->withQueryString(); 
 
         if (Auth::user()->role == 'admin') {
             return view('assets.index', compact('assets'));
@@ -32,14 +43,13 @@ class AssetController extends Controller
             'kode_aset' => 'required|unique:assets,kode_aset',
             'kondisi'   => 'required',
             'status'    => 'required',
-            'stock'     => 'required|integer|min:0', // Tambahan: Validasi stok
+            'stock'     => 'required|integer|min:0', 
             'image'     => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
         ]);
 
         $data = $request->except('image');
 
         if ($request->hasFile('image')) {
-            // Simpan ke storage/app/public/assets
             $file = $request->file('image');
             $nama_file = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('assets', $nama_file, 'public');
@@ -64,7 +74,7 @@ class AssetController extends Controller
             'kode_aset' => 'required|unique:assets,kode_aset,' . $asset->id,
             'kondisi'   => 'required',
             'status'    => 'required',
-            'stock'     => 'required|integer|min:0', // Tambahan: Validasi stok
+            'stock'     => 'required|integer|min:0',
             'image'     => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
             'deskripsi' => 'nullable'
         ]);

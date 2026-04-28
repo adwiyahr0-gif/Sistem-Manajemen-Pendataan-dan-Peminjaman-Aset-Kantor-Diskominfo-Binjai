@@ -7,9 +7,20 @@
             <h2 class="fw-bold mb-1">Manajemen Inventaris</h2>
             <p class="text-muted small">Kelola data aset, kondisi, dan status ketersediaan barang.</p>
         </div>
-        <a href="{{ route('assets.create') }}" class="btn btn-primary shadow-sm px-4">
-            <i class="bi bi-plus-lg me-2"></i> Tambah Aset Baru
-        </a>
+        
+        {{-- BAGIAN BARU: FORM PENCARIAN --}}
+        <div class="d-flex gap-2">
+            <form action="{{ route('assets.index') }}" method="GET" class="d-flex gap-2">
+                <input type="text" name="search" class="form-control" placeholder="Cari nama aset..." value="{{ request('search') }}">
+                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+                @if(request('search'))
+                    <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary"><i class="bi bi-x"></i></a>
+                @endif
+            </form>
+            <a href="{{ route('assets.create') }}" class="btn btn-primary shadow-sm px-4">
+                <i class="bi bi-plus-lg me-2"></i> Tambah Aset Baru
+            </a>
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm">
@@ -30,7 +41,6 @@
                         @forelse($assets as $index => $asset)
                         <tr>
                             <td class="ps-4 text-muted small">
-                                {{-- Rumus agar nomor berlanjut di tiap halaman --}}
                                 {{ ($assets->currentPage() - 1) * $assets->perPage() + $loop->iteration }}
                             </td>
                             <td>
@@ -70,7 +80,7 @@
                         <tr>
                             <td colspan="6" class="text-center py-5 text-muted">
                                 <i class="bi bi-box2 fs-1 d-block mb-2"></i>
-                                Belum ada data aset.
+                                {{ request('search') ? 'Data tidak ditemukan.' : 'Belum ada data aset.' }}
                             </td>
                         </tr>
                         @endforelse
@@ -86,7 +96,7 @@
             Menampilkan <strong>{{ $assets->firstItem() ?? 0 }}</strong> - <strong>{{ $assets->lastItem() ?? 0 }}</strong> dari <strong>{{ $assets->total() }}</strong> aset
         </div>
         <div class="shadow-sm">
-            {{ $assets->links('pagination::bootstrap-5') }}
+            {{ $assets->appends(request()->input())->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </div>
