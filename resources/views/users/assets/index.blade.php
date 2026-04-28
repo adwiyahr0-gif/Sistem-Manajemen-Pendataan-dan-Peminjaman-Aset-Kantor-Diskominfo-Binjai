@@ -32,9 +32,8 @@
             <div class="col-md-3">
                 <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
                     <div class="position-relative">
-                        {{-- PERBAIKAN PEMANGGILAN GAMBAR --}}
+                        {{-- Gambar Aset --}}
                         @if($asset->image)
-                            {{-- Memastikan URL mengarah ke public storage --}}
                             <img src="{{ asset('storage/' . $asset->image) }}" 
                                  class="card-img-top" 
                                  style="height: 180px; object-fit: cover;" 
@@ -44,11 +43,19 @@
                                 <i class="bi bi-image text-secondary fs-1"></i>
                             </div>
                         @endif
-                        <span class="position-absolute top-0 end-0 m-2 badge bg-success shadow-sm">{{ ucfirst($asset->status) }}</span>
+                        
+                        {{-- Badge Stok (Pojok Kiri Atas) --}}
+                        <span class="position-absolute top-0 start-0 m-2 badge {{ ($asset->stock ?? 0) > 0 ? 'bg-primary' : 'bg-danger' }} shadow-sm">
+                            Stok: {{ $asset->stock ?? 0 }}
+                        </span>
+
+                        {{-- Badge Status (Pojok Kanan Atas) --}}
+                        <span class="position-absolute top-0 end-0 m-2 badge bg-success shadow-sm">
+                            {{ ucfirst($asset->status) }}
+                        </span>
                     </div>
                     
                     <div class="card-body">
-                        {{-- Nama Aset dari database --}}
                         <h6 class="fw-bold text-dark mb-1">{{ $asset->nama_aset }}</h6>
                         <small class="text-primary d-block mb-2 fw-semibold">{{ $asset->kode_aset }}</small>
                         
@@ -57,9 +64,15 @@
                         </p>
 
                         <div class="d-grid">
-                            <a href="{{ route('borrowings.create', ['asset_id' => $asset->id]) }}" class="btn btn-sm btn-outline-primary rounded-pill fw-bold">
-                                <i class="bi bi-plus-lg me-1"></i> Pinjam Barang
-                            </a>
+                            @if(($asset->stock ?? 0) > 0)
+                                <a href="{{ route('borrowings.create', ['asset_id' => $asset->id]) }}" class="btn btn-sm btn-outline-primary rounded-pill fw-bold">
+                                    <i class="bi bi-plus-lg me-1"></i> Pinjam Barang
+                                </a>
+                            @else
+                                <button class="btn btn-sm btn-secondary rounded-pill fw-bold" disabled>
+                                    <i class="bi bi-x-circle me-1"></i> Stok Habis
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>

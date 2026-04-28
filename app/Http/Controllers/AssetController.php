@@ -32,20 +32,18 @@ class AssetController extends Controller
             'kode_aset' => 'required|unique:assets,kode_aset',
             'kondisi'   => 'required',
             'status'    => 'required',
+            'stock'     => 'required|integer|min:0', // Tambahan: Validasi stok
             'image'     => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
         ]);
 
-        // Ambil semua input kecuali image
         $data = $request->except('image');
 
-        // Proses Upload Gambar
         if ($request->hasFile('image')) {
             // Simpan ke storage/app/public/assets
             $file = $request->file('image');
             $nama_file = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('assets', $nama_file, 'public');
             
-            // Simpan path-nya ke kolom image
             $data['image'] = $path;
         }
 
@@ -66,6 +64,7 @@ class AssetController extends Controller
             'kode_aset' => 'required|unique:assets,kode_aset,' . $asset->id,
             'kondisi'   => 'required',
             'status'    => 'required',
+            'stock'     => 'required|integer|min:0', // Tambahan: Validasi stok
             'image'     => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
             'deskripsi' => 'nullable'
         ]);

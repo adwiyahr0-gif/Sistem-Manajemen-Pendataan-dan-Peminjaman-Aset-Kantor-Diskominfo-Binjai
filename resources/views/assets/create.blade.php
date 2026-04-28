@@ -13,9 +13,8 @@
 
             <div class="card border-0 shadow-sm" style="border-radius: 15px;">
                 <div class="card-body p-4">
-                    {{-- Tambahkan enctype="multipart/form-data" jika nanti ingin upload gambar --}}
                     <form action="{{ route('assets.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf {{-- Pastikan ini tidak terhapus untuk menghindari error 419 --}}
+                        @csrf 
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -61,7 +60,17 @@
                             </div>
                         </div>
 
-                        {{-- Tambahan Input images (Opsional, agar katalog user bagus) --}}
+                        {{-- Input Tambahan: Jumlah Stok Aset --}}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Jumlah Stok Aset</label>
+                                <input type="number" name="stock" class="form-control @error('stock') is-invalid @enderror" placeholder="Contoh: 10" value="{{ old('stock') }}" min="0" required>
+                                @error('stock')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label fw-bold">Foto Aset <span class="text-muted small">(Opsional)</span></label>
                             <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">

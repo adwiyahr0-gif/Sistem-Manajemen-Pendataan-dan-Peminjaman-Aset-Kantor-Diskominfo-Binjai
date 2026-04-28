@@ -19,5 +19,6 @@ class Asset extends Model
         'kondisi',
         'image',
         'deskripsi',
+        'stock', // Sudah ditambahkan agar stok dapat disimpan ke database
     ];
 }

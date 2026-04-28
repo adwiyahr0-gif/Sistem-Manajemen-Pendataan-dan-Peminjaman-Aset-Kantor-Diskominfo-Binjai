@@ -56,7 +56,21 @@ class BorrowingController extends Controller
             'asset_id'       => 'required|exists:assets,id',
             'tanggal_pinjam' => 'required|date',
             'alasan'         => 'nullable|string|max:255',
+            'quantity'       => 'required|integer|min:1', // Pastikan quantity divalidasi
         ]);
+
+        // --- TAMBAHAN: LOGIKA LIMIT PEMINJAMAN ---
+        $batasMaksimal = 5; // Ubah angka ini ke 10 jika ingin batas 10
+        
+        // Menghitung jumlah pinjaman user yang belum selesai
+        $jumlahPinjamanAktif = Borrowing::where('user_id', Auth::id())
+                                        ->whereIn('status_peminjaman', ['pending', 'disetujui'])
+                                        ->count();
+
+        if ($jumlahPinjamanAktif >= $batasMaksimal) {
+            return redirect()->back()->with('error', 'Maaf, Anda telah mencapai batas maksimal peminjaman (' . $batasMaksimal . ' barang). Silakan kembalikan aset terlebih dahulu.');
+        }
+        // ------------------------------------------
 
         // Status awal: 'disetujui' jika admin yang input, 'pending' jika user
         $statusAwal = (Auth::user()->role == 'admin') ? 'disetujui' : 'pending';
@@ -68,6 +82,7 @@ class BorrowingController extends Controller
             'tanggal_pinjam'    => $request->tanggal_pinjam,
             'status_peminjaman' => $statusAwal,
             'alasan'            => $request->alasan,
+            'quantity'          => $request->quantity, // Pastikan ini tersimpan
         ]);
 
         // Jika Admin yang input, langsung ubah status barang di tabel assets
