@@ -31,11 +31,20 @@
 <div class="card mb-4 d-print-none border-0 shadow-sm">
     <div class="card-body">
         <form action="{{ route('borrowings.index') }}" method="GET" class="row g-3">
-            {{-- TAMBAHAN KOLOM PENCARIAN NAMA PEMINJAM --}}
-            <div class="col-md-3">
+            {{-- TAMBAHAN KOLOM PENCARIAN NAMA PEMINJAM DENGAN INPUT GROUP --}}
+            <div class="col-md-4">
                 <label class="form-label small fw-bold">Nama Peminjam</label>
-                <input type="text" name="nama_peminjam" class="form-control" placeholder="Cari nama..." value="{{ request('nama_peminjam') }}">
+                <div class="input-group">
+                    <input type="text" name="nama_peminjam" class="form-control" placeholder="Cari nama..." value="{{ request('nama_peminjam') }}">
+                    <button type="submit" class="btn btn-primary" title="Cari">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <a href="{{ route('borrowings.index') }}" class="btn btn-outline-secondary" title="Reset">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
             </div>
+            
             <div class="col-md-3">
                 <label class="form-label small fw-bold">Dari Tanggal</label>
                 <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
@@ -44,9 +53,8 @@
                 <label class="form-label small fw-bold">Sampai Tanggal</label>
                 <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
             </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2 px-4">Filter</button>
-                <a href="{{ route('borrowings.index') }}" class="btn btn-outline-secondary px-4">Reset</a>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
             </div>
         </form>
     </div>
